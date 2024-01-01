@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>spring-boot-starter-openssl</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body ng-app="spring-boot-starter-openssl" class="font-monospace">
+
+    <div class="container" ng-controller="ApiController as $controller">
+        <nav class="navbar">
+            <h1>spring-boot-starter-openssl</h1>
+        </nav>
+
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Key Size</span>
+                    </div>
+                    <input type="text" class="form-control" id="keysize" ng-model="$controller.keysize"
+                        placeholder="Key Size" data-toggle="tooltip" title="1024, 2048, 4096 etc">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="algo" id="RSA" value="RSA"
+                            ng-model="$controller.algo">
+                        <label class="form-check-label" for="RSA">RSA</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="algo" id="DSA" value="DSA"
+                            ng-model="$controller.algo">
+                        <label class="form-check-label" for="DSA">DSA</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <input type="button" class="btn btn-outline-primary" value="Generate Key Pair"
+                    ng-click="$controller.generateKeyPair()">
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Subject</span>
+                    </div>
+                    <input type="text" class="form-control" id="subjectCer" ng-model="$controller.subjectCer"
+                        placeholder="CN = Common Name, OU = Organization Unit, O = Organization, L = Location, ST = State, C = Country"
+                        title="CN = Common Name, OU = Organization Unit, O = Organization, L = Location, ST = State, C = Country"
+                        data-toggle="tooltip">
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Sign Algorithm</span>
+                    </div>
+                    <input type="text" class="form-control" id="signAlgoCer" ng-model="$controller.signAlgoCer"
+                        placeholder="Signature Algorithm" data-toggle="tooltip"
+                        title="SHA256withRSA, SHA256withDSA etc">
+                    <input type="button" value="Generate CSR" class="btn btn-outline-primary"
+                        ng-click="$controller.generateCsr()" data-toggle="tooltip"
+                        title="Generate certificate signing request for selected key pair">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Expiry Days</span>
+                    </div>
+                    <input type="text" class="form-control" id="expiryCer" ng-model="$controller.expiryCer"
+                        placeholder="Certificate Expiry Days">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="input-group">
+                    <input type="button" value="Sign CSR" class="btn btn-outline-primary"
+                        ng-click="$controller.signCsr()" data-toggle="tooltip"
+                        title="Generate certificate by signing CSR with checked root CA certificate and private key">
+                    <input type="button" value="Generate Self Sign Certificate" class="btn btn-outline-primary"
+                        ng-click="$controller.generateSelfSignCer()" data-toggle="tooltip"
+                        title="Create self signed certificate for selected key pair">
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Password</span>
+                    </div>
+                    <input type="password" class="form-control form-control-sm" id="password" placeholder="Password"
+                        ng-model="$controller.password">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="type" id="PKCS12" value="PKCS12"
+                        ng-model="$controller.type">
+                    <label class="form-check-label" for="PKCS12">PKCS12</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="type" id="JKS" value="JKS"
+                        ng-model="$controller.type">
+                    <label class="form-check-label" for="JKS">JKS</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="type" id="Other" value="Other"
+                        ng-model="$controller.type">
+                    <label class="form-check-label" for="Other">Other(PEM)</label>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <input type="button" value="Export" class="btn btn-outline-primary" ng-click="$controller.export()">
+            </div>
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <input type="file" id="file" style="display: none;">
+                    <input type="text" class="form-control" id="fileName" placeholder="Choose file ..."
+                        ng-model="$controller.fileName" readonly>
+                    <input type="button" class="btn btn-outline-primary" value="Browse" ng-click="$controller.browse()">
+                    <input type="button" class="btn btn-outline-primary" value="Import" ng-click="$controller.import()">
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <textarea id="value" name="selectedValue" rows="7" class="form-control font-monospace lh-1"
+                    ng-model="$controller.selectedEntry.value" readonly></textarea>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Type</span>
+                    </div>
+                    <input type="text" class="form-control" name="selectedType"
+                        ng-model="$controller.selectedEntry.type" readonly>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Alias</span>
+                    </div>
+                    <input type="text" class="form-control" id="selectedAlias"
+                        ng-model="$controller.selectedEntry.alias">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Imported At</span>
+                    </div>
+                    <input type="text" class="form-control" id="selectedCreatedAt"
+                        ng-model="$controller.selectedEntry.createdAt" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-12">
+                <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th>#</th>
+                            <th>Type</th>
+                            <th>Alias</th>
+                            <th>Value</th>
+                            <th>Imported At</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr ng-repeat="row in $controller.data.rows">
+                            <td><input type="radio" class="form-check-input" name="index"
+                                    ng-value="::$controller.data.rows.length - $index"
+                                    ng-model="$controller.selectedIndex" ng-click="$controller.select($index)">
+                            </td>
+                            <td>{{::$controller.data.rows.length - $index}}</td>
+                            <td>{{::$controller.data.rows[$index].type}}</td>
+                            <td>{{$controller.data.rows[$index].alias}}</td>
+                            <td>{{::$controller.data.rows[$index].value.substring(0, 80)}}</td>
+                            <td>{{::$controller.data.rows[$index].createdAt}}</td>
+                            <td><input type="checkbox" class="form-check-input" name="checked"
+                                    ng-model="$controller.data.rows[$index].checked"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js" crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>

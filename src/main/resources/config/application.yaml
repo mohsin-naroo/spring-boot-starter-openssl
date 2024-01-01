@@ -1,0 +1,24 @@
+# webapp settings
+spring:
+  application:
+    name: ${openssl.name:openssl}
+  jackson:
+    default-property-inclusion: non-null
+
+# logging settings
+logging:
+  pattern:
+    level: "%5p ${HOSTNAME}"
+  file:
+    name: ${openssl.log.file:target/logs/openssl.log}
+  level:
+    '[io.github.meritepk.openssl]': debug
+
+# tomcat settings
+server:
+  servlet:
+    context-path: ${openssl.context-path:/}
+  tomcat:
+    basedir: ${openssl.tomcat.basedir:./target}
+    accesslog:
+      enabled: true
