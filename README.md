@@ -10,6 +10,8 @@ Spring Boot starter web application for openssl operations e.g.
 - Import from PKCS12, JKS or PEM
 - Export to PKCS12, JKS or PEM
 
+![](example.png)
+
 ## Requirements
 
 - [Java 17](https://www.oracle.com/pk/java/technologies/downloads/#java17)
